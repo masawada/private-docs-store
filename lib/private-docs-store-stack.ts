@@ -2,6 +2,7 @@ import * as cdk from '@aws-cdk/core';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as cloudfront from '@aws-cdk/aws-cloudfront';
 import * as iam from '@aws-cdk/aws-iam';
+import * as secretsManager from '@aws-cdk/aws-secretsmanager';
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
 
 export class PrivateDocsStoreStack extends cdk.Stack {
@@ -23,9 +24,15 @@ export class PrivateDocsStoreStack extends cdk.Stack {
     });
     bucket.addToResourcePolicy(bucketPolicyStatement);
 
+    const basicAuthSecret = new secretsManager.Secret(this, 'basicAuthSecret', {
+      secretName: 'private-docs-store-secret',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
     const basicAuthFunction = new NodejsFunction(this, 'basicAuthFunction', {
       entry: 'src/lambda/handlers/auth.ts',
     });
+    basicAuthSecret.grantRead(basicAuthFunction);
 
     const cloudfrontDistribution = new cloudfront.CloudFrontWebDistribution(this, 'privateDocsDistribution', {
       originConfigs: [
