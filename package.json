@@ -14,6 +14,7 @@
     "@aws-cdk/assert": "1.119.0",
     "@aws-cdk/aws-cloudfront": "^1.119.0",
     "@aws-cdk/aws-iam": "^1.119.0",
+    "@aws-cdk/aws-lambda-nodejs": "^1.119.0",
     "@aws-cdk/aws-s3": "^1.119.0",
     "@types/aws-lambda": "^8.10.82",
     "@types/jest": "^26.0.10",
