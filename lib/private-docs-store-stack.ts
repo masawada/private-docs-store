@@ -10,7 +10,9 @@ export class PrivateDocsStoreStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const bucket = new s3.Bucket(this, 'privateDocsBucket');
+    const bucket = new s3.Bucket(this, 'privateDocsBucket', {
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
 
     const storeIdentity = new cloudfront.OriginAccessIdentity(this, 'storeIdentity');
     const bucketPolicyStatement = new iam.PolicyStatement({
