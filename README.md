@@ -1,14 +1,28 @@
-# Welcome to your CDK TypeScript project!
+# Private Docs Store
 
-This is a blank project for TypeScript development with CDK.
+The CDK stack creates these resources:
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+- CloudFront
+  - enabled Basic Authentication with Lambda@Edge
+- S3 bucket
+  - When objects are put, a notification is sent to your Slack channel
 
-## Useful commands
+## Init
 
- * `npm run build`   compile typescript to js
- * `npm run watch`   watch for changes and compile
- * `npm run test`    perform the jest unit tests
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk synth`       emits the synthesized CloudFormation template
+You must create the stack in the us-east-1 region.
+
+```
+$ npx cdk bootstrap --profile YOUR_PROFILE_NAME
+$ npx cdk deploy PrivateDocsStoreStack --profile YOUR_PROFILE NAME
+$ cp config/slackConfig.json.example config/slackConfig.json
+$ cat config/slackConfig.json
+{
+  "SLACK_BOT_TOKEN": "YOUR_SLACK_BOT_TOKEN",
+  "SLACK_SIGNING_SECRET": "YOUR_SLACK_SIGNING_SECRET",
+  "SLACK_CHANNEL_ID": "YOUR_SLACK_CHANNEL_NAME"
+}
+$ aws secrets manager update-secret --secret-id private-docs-store-secret --secret-string $(echo -n "YOUR_BASIC_USER:YOUR_BASIC_PASS" | base64) --profile YOUR_PROFILE_NAME
+$ aws secrets manager update-secret --secret-id YOUR_SLACK_NOTIFIER_SECRET_NAME --secret-string file://config/slackConfig.json --profile YOUR_PROFILE_NAME
+```
+
+note: The bot token requires the `chat.write` permission.
